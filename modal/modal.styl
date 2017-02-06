@@ -1,0 +1,216 @@
+@require '~f5-sub-module-common/styles/base'
+
+// Local vars
+$zindex-modal = 9999999
+$modal-content-bg = #fff
+$modal-content-border-color = #eee
+$modal-header-border-color = #e5e5e5
+$modal-footer-border-color = #e5e5e5
+$modal-title-padding = 30px 30px 0 30px
+$modal-inner-padding = 15px 30px 30px 30px
+$modal-lg = 900px
+$modal-md = 600px
+$modal-sm = 300px
+
+// TODO
+// Remove 'html' & '.ib-f5-component' selector prefixes. These are being used as the modal is being attached to the body
+// and not the f5-component module itself. These can be removed when css scoping is no longewr required.
+
+// Modal background
+html .ib-f5-component.modal-backdrop.fade {
+  opacity: .75
+  transition: opacity .15s linear
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .75;
+    }
+  }
+  &.ng-leave {
+    opacity: .75;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+html .ib-f5-component.modal-backdrop
+   position fixed
+   top 0
+   right 0
+   bottom 0
+   left 0
+   z-index $zindex-modal-background
+   background-color $modal-backdrop-bg
+
+   // Fade for backdrop
+   &.fade
+     opacity-ie(0)
+
+   &.in
+     opacity-ie($modal-backdrop-opacity)
+
+
+.modal-close-btn
+  color $ib-red
+  font-family: $font-family-brand-light
+  font-size 1.2em
+  padding 30px 30px
+  line-height 20px
+  font-weight bold
+  vertical-align middle
+  background none
+  border none
+  position absolute
+  right 0
+  top 0
+
+  span
+    float right
+    font-weight normal
+    margin-left 5px
+    font-size 24px
+
+  &:focus,
+  &:active
+    outline 1px dotted #bbb // Accessibility requirement
+
+//
+// Modals
+// --------------------------------------------------
+
+// .modal-open - body class for killing the scroll
+// .modal - container to scroll within
+// .modal-dialog - positioning shell for the actual modal
+// .modal-content - actual modal w/ bg and corners and shit
+
+// Kill the scroll on the body
+html .modal-open
+  overflow hidden
+
+// Container that the modal scrolls within
+.ib-f5-component.modal
+  display none
+  overflow hidden
+  background: none
+  position fixed
+  top 0
+  right 0
+  bottom 0
+  left 0
+  z-index $zindex-modal
+  -webkit-overflow-scrolling touch
+
+  // Prevent Chrome on Windows from adding a focus outline. For details, see
+  // https://github.com/twbs/bootstrap/pull/10951.
+  outline 0
+
+  // When fading in the modal, animate it to slide down
+  &.fade .modal-dialog
+    transform translate(0, -25%)
+    transition transform 0.3s ease-out
+
+  &.in .modal-dialog
+    transform translate(0, 0)
+
+html .modal-open .modal
+  overflow-x hidden
+  overflow-y auto
+
+// Shell div to position the modal with bottom padding
+.ib-f5-component .modal-dialog
+  position relative
+  width auto
+  margin 10px
+
+// Actual modal
+.modal-content
+  position relative
+  background-color $modal-content-bg
+  border 1px solid $modal-content-border-color
+  box-shadow 0 0 8px rgba(0, 0, 0, .5)
+  background-clip padding-box
+  // Remove focus outline from opened modal
+  outline 0
+
+// Modal header
+// Top section of the modal w/ title and dismiss
+.modal-header
+  padding $modal-title-padding
+  clearfix()
+  .modal-header-inner
+    padding-bottom: 10px
+    border-bottom 1px solid $modal-header-border-color
+
+// Title text within header  .ib-f5-component
+.modal-title
+  font-size: 20px
+  margin 0
+  line-height $modal-title-line-height
+
+// Modal body
+// Where all modal content resides (sibling of .modal-header and .modal-footer)
+.ib-f5-component
+  .modal-body
+    position relative
+    padding $modal-inner-padding
+
+ // Scale up the modal
+@media (min-width $screen-sm-min)
+ // Automatically set modal's width for larger viewports
+ .ib-f5-component
+   .modal-dialog
+     width $modal-md
+     margin 30px auto
+ .ib-f5-component
+   .modal-content
+     box-shadow 0 5px 15px rgba(0, 0, 0, .5)
+
+// Modal sizes
+.ib-f5-component
+  .modal-sm
+    width $modal-sm
+
+@media (min-width $screen-md-min)
+  .ib-f5-component
+    .modal-lg
+      width $modal-lg
+
+// Fade & Slide
+//
+
+$fade-and-slide-duration = .25s;
+$fade-and-slide-timing-function = ease-in-out;
+
+.ib-f5-component .modal-dialog
+  animation-duration: $fade-and-slide-duration;
+  animation-timing-function: $fade-and-slide-timing-function;
+  animation-fill-mode: backwards;
+
+  &.ng-enter
+    visibility: hidden
+    animation-name: fadeAndSlideFromTop
+    animation-play-state: paused
+    &.ng-enter-active
+      visibility: visible
+      animation-play-state: running
+
+  &.ng-leave
+    animation-name: fadeAndSlideToTop
+    animation-play-state: paused
+    &.ng-leave-active
+      animation-play-state: running
+
+@keyframes fadeAndSlideFromTop
+  from
+    opacity: 0
+    transform: translateY(-20%)
+  to
+    opacity: 1
+
+@keyframes fadeAndSlideToTop
+  from
+    opacity: 1
+  to
+    opacity: 0
+    transform: translateY(-20%)
